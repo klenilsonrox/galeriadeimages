@@ -3,9 +3,9 @@ import React, { useEffect, useRef, useState } from 'react';
 
 const Page = () => {
   const [modalImage, setOpenModalImage] = useState(false);
-  const imageRef = useRef();
   const [id, setId] = useState(1);
   const [image, setImage] = useState("");
+  const [isTransitioning, setIsTransitioning] = useState(false);
 
   const images = [
     { image: "../images/1.jpg", id: 1 },
@@ -27,16 +27,23 @@ const Page = () => {
     setImage(images.find(img => img.id === imgId).image);
   }
 
+  function changeImage(newId) {
+    setIsTransitioning(true);
+    setTimeout(() => {
+      setId(newId);
+      setImage(images.find(img => img.id === newId).image);
+      setIsTransitioning(false);
+    }, 300); // Duration of the transition
+  }
+
   function aumentarId() {
     const nextId = id < images.length ? id + 1 : 1;
-    setId(nextId);
-    setImage(images.find(img => img.id === nextId).image);
+    changeImage(nextId);
   }
 
   function diminuirId() {
     const prevId = id > 1 ? id - 1 : images.length;
-    setId(prevId);
-    setImage(images.find(img => img.id === prevId).image);
+    changeImage(prevId);
   }
 
   function closeModal(e) {
@@ -56,11 +63,15 @@ const Page = () => {
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 backdrop-blur-sm" id='modal' onClick={closeModal}>
           <button className='absolute top-4 right-4 text-white text-2xl' onClick={() => setOpenModalImage(false)}>✖</button>
           <div className='flex items-center gap-3 w-full max-w-3xl px-4'>
-            <p className='cursor-pointer text-2xl  font-bold bg-white text-black flex items-center justify-center rounded-full w-10 h-10 relative right-[-30px]' onClick={diminuirId}>←</p>
+            <p className='cursor-pointer text-2xl font-bold bg-white text-black flex items-center justify-center rounded-full w-10 h-10 relative right-[-30px]' onClick={diminuirId}>←</p>
             <div className="flex justify-center w-full">
-              <img src={image} alt="" className='w-full max-h-screen object-contain rounded-lg' ref={imageRef} />
+              <img
+                src={image}
+                alt=""
+                className={`w-full max-h-screen object-contain rounded-lg transition-opacity duration-300 ${isTransitioning ? 'opacity-0' : 'opacity-100'}`}
+              />
             </div>
-            <p className='cursor-pointer text-2xl  font-bold bg-white text-black flex items-center justify-center rounded-full w-10 h-10 relative right-[30px]' onClick={aumentarId}>→</p>
+            <p className='cursor-pointer text-2xl font-bold bg-white text-black flex items-center justify-center rounded-full w-10 h-10 relative right-[30px]' onClick={aumentarId}>→</p>
           </div>
         </div>
       )}
