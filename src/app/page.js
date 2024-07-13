@@ -33,7 +33,7 @@ const Page = () => {
       setId(newId);
       setImage(images.find(img => img.id === newId).image);
       setIsTransitioning(false);
-    }, 300); // Duration of the transition
+    }, 300); 
   }
 
   function aumentarId() {
